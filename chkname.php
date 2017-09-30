@@ -1,0 +1,26 @@
+<?php
+session_start();
+header ( "Content-type: text/html; charset=UTF-8" ); 						//设置文件编码格式
+require("system/system.inc.php");
+$reback = '0';
+$sql = "select * from tb_user where name='".$_GET['user']."'";
+if(isset($_GET['password'])){
+	$sql .= " and password = '".md5($_GET['password'])."'";
+}
+$rst = $admindb->ExecSQL($sql,$conn);
+if($rst){
+	/*  登录所用  */
+	if($rst[0]['isfreeze'] != 0){
+		$reback = '3';
+	}else{
+		$_SESSION['member'] = $rst[0]['name'];
+		$_SESSION['id'] = $rst[0]['id'];
+		// echo "here: " . $_SESSION['member'];
+		$reback = '2';
+		// $reback = $_SESSION['member'];
+	}
+}else{
+	$reback = '1';
+}
+echo $reback;
+?>
